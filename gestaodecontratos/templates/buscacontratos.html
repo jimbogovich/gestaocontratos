@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-2">
+  <h3 class="fw-bold mb-4">Buscar Contratos</h3>
+
+
+  <form method="post" class="d-flex mb-4">
+    {% csrf_token %}
+    <input type="text" name="busca" class="form-control me-2" placeholder="Procure por título, cliente, valor, status..." value="{{ request.POST.busca }}">
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-search"></i>
+        Procurar
+    </button>
+  </form>
+
+  <table class="table table-hover bg-white shadow-sm rounded">
+    <thead class="table-light">
+      <tr>
+        <th>Título</th>
+        <th>Cliente</th>
+        <th>Tipo de Contrato</th>
+        <th>Status</th>
+        <th>Data Inicial</th>
+        <th>Data Final</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contrato in contratos %}
+      <tr>
+        <td><a href="{% url 'visualizacaocontrato' contrato.id %}" class="text-decoration-none text-dark">{{ contrato.title }}</a></td>
+        <td>{{ contrato.client }}</td>
+        <td>{{ contrato.type_contract }}</td>
+        <td>
+          {% if contrato.status == 'ativo' %}
+            <span class="badge bg-success">Ativo</span>
+          {% elif contrato.status == 'rascunho' %}
+            <span class="badge bg-warning text-dark">Encerrando</span>
+          {% elif contrato.status == 'encerrado' %}
+            <span class="badge bg-danger">Encerrado</span>
+          {% else %}
+            <span class="badge bg-danger">Desconhecido</span>
+          {% endif %}
+        </td>
+        <td>{{ contrato.date_begin|date:"d/m/Y" }}</td>
+        <td>{{ contrato.date_end|date:"d/m/Y" }}</td>
+        <td>R$ {{ contrato.contract_value|floatformat:2 }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center text-muted">Nenhum contrato encontrado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

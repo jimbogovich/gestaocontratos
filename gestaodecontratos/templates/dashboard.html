@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-2">
+  <div class="row">
+          <div class="col-7">
+            <h2 class="fw-bold mb-4">Visão Geral Contratos</h2>
+          </div>
+          <div class="col-5 d-flex flex-wrap flex-row align-content-center justify-content-end gap-2">
+            <a href="{% url 'gestaodecontratos' %}">
+                <button type="submit" style="min-width: 100px;" class="btn btn-primary rounded-3">
+                      <i class="bi bi-plus-lg me-1"></i>
+                          Novo Contrato
+                </button>
+            </a>
+          </div>
+    </div>
+
+  <div class="row mb-5">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <p class="text-muted mb-0">Total de Contratos</p>
+          <h4 class="fw-bold text-primary">{{ total_contratos }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <p class="text-muted mb-0">Expirará em breve</p>
+          <h4 class="fw-bold text-primary">{{ expirando }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <p class="text-muted mb-0">Contratos Ativos</p>
+          <h4 class="fw-bold text-primary">{{ ativos }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="fw-bold mb-3">Contract Details</h4>
+  <table class="table table-bordered table-hover bg-white rounded shadow-sm">
+    <thead class="table-light">
+      <tr>
+        <th>Contrato ID</th>
+        <th>Cliente</th>
+        <th>Tipo de Contrato</th>
+        <th>Data Inicial</th>
+        <th>Data Final</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contrato in contratos %}
+        <tr>
+          <td>{{ contrato.id }}</td>
+          <td>{{ contrato.client }}</td>
+          <td>{{ contrato.type_contract }}</td>
+          <td>{{ contrato.date_begin|date:"d/m/Y" }}</td>
+          <td>{{ contrato.date_end|date:"d/m/Y" }}</td>
+          <td>
+            {% if contrato.status_label == 'Ativo' %}
+              <span class="badge bg-success">Ativo</span>
+            {% elif contrato.status_label == 'Encerrando' %}
+              <span class="badge bg-warning text-dark">Irá expirar em breve</span>
+            {% else %}
+              <span class="badge bg-danger">Expirado</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

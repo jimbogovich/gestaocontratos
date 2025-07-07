@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container p-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold mb-0">Contratos</h2>
+        <a href="{% url 'gestaodecontratos' %}">
+            <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold rounded-3">
+                <i class="bi bi-plus-lg me-1"></i>
+                    Novo Contrato
+            </button>
+        </a>
+    </div>
+    <ul class="nav nav-tabs border-0 mb-4">
+      <li class="nav-item">
+        <a class="nav-link active" href="#">List</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Table</a>
+      </li>
+</ul>
+
+
+
+        <div class="d-flex flex-column gap-3 mt-3">
+        {% for contrato in contratos %}
+            <a href="{% url 'visualizacaocontrato' contrato.id %}" class="text-decoration-none text-dark">
+                <div class="card p-3 shadow-sm border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="fw-semibold mb-1">{{ contrato.title }}</h5>
+                            <small>Data Inicial: {{ contrato.date_begin|date:"d/m/Y" }} | Data Final: {{ contrato.date_end|date:"d/m/Y" }}</small><br>
+                            <small class="text-muted">{{ contrato.client.nome }}</small>
+                        </div>
+                        <a href="#" class="text-decoration-none text-primary">
+                            <i class="bi bi-chevron-right fs-4"></i>
+                        </a>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-muted">Nenhum contrato encontrado.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

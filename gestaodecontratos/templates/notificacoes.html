@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container py-5">
+  <h3 class="fw-bold mb-2">Configurar Lembretes</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-4">
+      <label for="id_notify_name" class="form-label">Nome do Lembrete</label>
+      {% render_field form.notify_name class+="form-control"%}
+    </div>
+    <div class="mb-4">
+      <label for="id_reminder_type" class="form-label">Tipo do Lembrete</label>
+       {% render_field form.reminder_type class+="form-control"%}
+    </div>
+
+    <div class="mb-4">
+      <label for="id_contract" class="form-label">Contract (Optional)</label>
+        {% render_field form.contract class+="form-control"%}
+
+      </select>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label for="id_reminder_date" class="form-label">Data de Início do Lembrete:</label>
+        {% render_field form.reminder_date class+="form-control"%}
+      </div>
+      <div class="col-md-6">
+        <label for="id_days_before" class="form-label">Notify Days Before</label>
+        <input type="number" class="form-control" id="id_days_before" name="days_before" placeholder="e.g., 30">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label for="id_frequency" class="form-label">Reminder Frequency</label>
+      <select class="form-select" id="id_frequency" name="frequency">
+        <option selected>Select frequency</option>
+        <option value="once">Uma vez</option>
+        <option value="daily">Diário</option>
+        <option value="weekly">Semanal</option>
+      </select>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary rounded-pill px-4 justify-content-end">
+      <i class="bi bi-floppy"></i>
+      Salvar Lembrete
+    </button>
+  </form>
+</div>
+{% endblock %}

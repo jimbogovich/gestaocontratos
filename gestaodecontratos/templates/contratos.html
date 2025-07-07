@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+<div class="container my-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4 w-100" style="max-width: 850px;">
+    <h2 class="mb-1 fw-bold">{% block form_title %}Criar/Modificar Contratos{% endblock %}</h2>
+    <p class="text-muted mb-4">{% block form_subtitle %}Preencha os detalhes abaixo para gerenciar as informações do contrato.{% endblock %}</p>
+        <div class="container mt-3">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+
+    <form action="{% url 'gestaodecontratos' %}" method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col">
+                <label for="id_title" class="form-label">Título do Contrato</label>
+                {% render_field form.title class+="form-control" %}
+            </div>
+        </div>
+            <div class="row g-3 mt-3">
+               <div class="col">
+                <label for="id_client" class="form-label">Clientes</label>
+                <div class="input-group">
+                    {% render_field form.client class+="form-control"%}
+                    <span class="input-group-text">
+                        <i class="bi bi-chevron-down"></i>
+                    </span>
+                </div>
+            </div>
+               <div class="col">
+                <label for="id_type_contract" class="form-label">Tipo de Contrato</label>
+                <div class="input-group">
+                    {% render_field form.type_contract class+="form-control" %}
+                    <span class="input-group-text">
+                        <i class="bi bi-chevron-down"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-3">
+                <div class="col">
+                <label for="id_date_begin" class="form-label">Data Inicial</label>
+                <div class="input-group">
+                    {% render_field form.date_begin class+="form-control" placeholder="dd/mm/aaaa" %}
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar"></i>
+                    </span>
+                </div>
+                </div>
+
+                <div class="col">
+                <label for="id_date_end" class="form-label">Data Final</label>
+                <div class="input-group">
+                    {% render_field form.date_end class+="form-control" placeholder="dd/mm/aaaa" %}
+                    <span class="input-group-text">
+                        <i class="bi bi-calendar"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="row g-3">
+            <div class="col">
+                <label for="id_description" class="form-label">Descrição</label>
+                {% render_field form.description class+="form-control" placeholder="Faça uma breve descrição dos termos e aplicações..." %}
+            </div>
+            <div class="row g-3">
+            <div class="col">
+                <label for="id_contract_value" class="form-label">Valor do Contrato(Opcional)</label>
+                {% render_field form.contract_value class+="form-control" placeholder="$ 0.00" %}
+            </div>
+
+            <div class="row g-3">
+            <label for="id_status" class="form-label">Status</label>
+            <div class="d-flex gap-4">
+                {% for radio in form.status %}
+                    <div class="form-check form-check-inline">
+                        {{ radio.tag }}
+                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                            {{ radio.choice_label }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+                <hr class="">
+
+        <div class="row g-3 mb-3">
+            <div class="col mt-5 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary">Cancelar</button>
+
+            <button type="submit" class="btn btn-primary d-flex align-items-center gap-2">
+                <i class="bi bi-floppy"></i>
+                    Salvar Contrato
+            </button>
+            </div>
+
+    </form>
+    {% endblock content %}
+
+    {% block extra_js %}
+    <script>
+    $(function() {
+        $.datepicker.setDefaults($.datepicker.regional["pt-BR"]);
+        $("#id_date_begin, #id_date_end").datepicker({
+            dateFormat: "dd/mm/yy",
+           dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+           dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
+           dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+           monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+           monthNamesShort: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+           nextText: 'Próximo',
+           prevText: 'Anterior'
+            });
+    });
+    </script>
+
+        <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('input[name="status"]');
+        checkboxes.forEach(cb => {
+          cb.addEventListener('change', function () {
+            if (this.checked) {
+              checkboxes.forEach(other => {
+                if (other !== this) other.checked = false;
+              });
+            }
+          });
+        });
+      });
+    </script>
+    </div>
+    </div>
+</div>
+{% endblock %}
