@@ -2,8 +2,8 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content %}
-<div class="container py-5">
-  <h3 class="fw-bold mb-2">Configurar Lembretes</h3>
+<div class="container py-3">
+  <h3 class="fw-bold mb-4">Configurar Lembretes</h3>
   <form method="post">
     {% csrf_token %}
     <div class="mb-4">
@@ -14,12 +14,9 @@
       <label for="id_reminder_type" class="form-label">Tipo do Lembrete</label>
        {% render_field form.reminder_type class+="form-control"%}
     </div>
-
     <div class="mb-4">
-      <label for="id_contract" class="form-label">Contract (Optional)</label>
+      <label for="id_contract" class="form-label">Contrato (Opcional)</label>
         {% render_field form.contract class+="form-control"%}
-
-      </select>
     </div>
 
     <div class="row mb-4">
@@ -28,22 +25,14 @@
         {% render_field form.reminder_date class+="form-control"%}
       </div>
       <div class="col-md-6">
-        <label for="id_days_before" class="form-label">Notify Days Before</label>
-        <input type="number" class="form-control" id="id_days_before" name="days_before" placeholder="e.g., 30">
+        <label for="id_notify_days_before" class="form-label">Número de dias anteriores ao lembrete:</label>
+        {% render_field form.notify_days_before class+="form-control"%}
       </div>
     </div>
-
     <div class="mb-4">
-      <label for="id_frequency" class="form-label">Reminder Frequency</label>
-      <select class="form-select" id="id_frequency" name="frequency">
-        <option selected>Select frequency</option>
-        <option value="once">Uma vez</option>
-        <option value="daily">Diário</option>
-        <option value="weekly">Semanal</option>
-      </select>
+      <label for="id_frequency" class="form-label">Frequência do Lembrete</label>
+      {% render_field form.frequency class+="form-control" placeholder="Diária, Mensal..." %}
     </div>
-
-
     <button type="submit" class="btn btn-primary rounded-pill px-4 justify-content-end">
       <i class="bi bi-floppy"></i>
       Salvar Lembrete

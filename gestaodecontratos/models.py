@@ -65,10 +65,8 @@ class contactManagement_db(models.Model):
             return 'Encerrando'
         else:
             return 'Ativo'
-
     def __str__(self):
         return f"{self.contract_id} - {self.title}"
-
     def save(self, *args, **kwargs):
         if not self.contract_id:
             new_id = generate_contract_id()
