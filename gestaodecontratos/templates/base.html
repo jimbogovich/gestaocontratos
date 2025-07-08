@@ -35,6 +35,10 @@
             color: #000000;
             background-color: transparent;
         }
+        #notification-badge {
+            width: 10px;
+            height: 10px;
+        }
 
     </style>
 
@@ -61,6 +65,39 @@
 <!-- jQuery UI - Localização pt-BR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-datepicker/1.13.0/i18n/datepicker-pt-BR.min.js"></script>
     {% block extra_js %}{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $.get('/api/notificacoes_nao_lidas/', function(data) {
+  let dropdown = $('#notificacaoDropdown');
+  dropdown.empty();
+
+  if (data.length === 0) {
+    dropdown.append('<span class="dropdown-item text-muted">Sem notificações.</span>');
+    $('#notificationBadge').hide();
+    return;
+  }
+
+  $('#notificationBadge').show();
+
+  data.forEach(n => {
+    let link = $(`
+      <a class="dropdown-item" href="/visualizacaocontrato/${n.contract_id}/">
+        <div class="fw-semibold">
+           ${n.contract_title}
+        </div>
+        <small class="text-muted">Lembrete: ${n.notify_name} - ${n.reminder_date}</small>
+      </a>
+    `);
+
+    dropdown.append(link);
+  });
+
+  dropdown.append('<div class="dropdown-divider"></div>');
+  dropdown.append('<a class="dropdown-item text-primary" href="/notificacoes/">+ Novo Lembrete</a>');
+});
+
+</script>
 
 </body>
 </html>

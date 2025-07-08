@@ -23,6 +23,26 @@
         </li>
       </ul>
     </div>
+    <span class="nav-item dropdown me-3">
+  <a class="nav-link position-relative" href="" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-bell fs-5"></i>
+    <span id="notification-badge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle d-none"></span>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationDropdown" style="width: 300px;">
+    <li class="dropdown-header fw-bold">Notificações</li>
+    <div id="notification-list">
+      <li class="dropdown-item text-muted small">Carregando...</li>
+    </div>
+    <li><hr class="dropdown-divider"></li>
+    <li>
+      <a class="dropdown-item text-center text-primary fw-semibold" href="{% url 'notificacoes' %}">
+        <i class="bi bi-plus-circle me-1"></i> Novo Lembrete
+      </a>
+    </li>
+  </ul>
+</span>
+
+
 
     <!-- Campo de busca -->
     <form class="d-flex align-items-center me-3" method="get" action="#">

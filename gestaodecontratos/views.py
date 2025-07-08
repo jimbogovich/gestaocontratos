@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .forms import ContratosForm, ReminderForm
@@ -10,8 +10,8 @@ def contratos_view(request):
         form = ContratosForm(request.POST)
 
         if form.is_valid():
-           form.save()
-           messages.success(request, "Contrato saved suceffully")
+           contrato = form.save()
+           return redirect('visualizacaocontrato', contrato.id)
         else:
             messages.error(request, form.errors)
 
@@ -41,8 +41,16 @@ def dashboardView(request):
     ativos = contactManagement_db.objects.filter(date_end__gt=today + timedelta(days=30)).count()
     contratos = contactManagement_db.objects.all()
 
+    reminders = Reminder.objects.filter(reminder_date__gte=today).order_by('reminder_date')[:5]
+
+    reminders_unread = Reminder.objects.filter(
+        reminder_date__gte=today,
+        visualizado=False
+    ).order_by('reminder_date')
 
     return render(request, 'dashboard.html', {
+        'reminders_unread': reminders_unread,
+        'reminders': reminders,
         'total_contratos': total_contratos,
         'expirando': expirando,
         'ativos': ativos,
@@ -75,10 +83,26 @@ def NotificationView(request):
         if form.is_valid():
             form.save()
             return redirect('dashboard')
-
     else:
         form = ReminderForm()
         return render(request, 'notificacoes.html', {'form': form})
+
+def notificacoes_nao_lidas_api(request):
+    lembretes = Reminder.objects.filter(visualizado=False).order_by('-reminder_date')[:5]
+    data = {
+        "notificacoes": [
+            {
+                "id": lembrete.id,
+                "notify_name": lembrete.notify_name,
+                "contract_id": lembrete.contract.id if lembrete.contract else None
+            }
+            for lembrete in lembretes
+        ]
+    }
+    return JsonResponse(data)
+
+
+
 
 
 

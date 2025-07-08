@@ -1,6 +1,5 @@
-from django.contrib import admin
-from django.urls import path, include
-from .views import contratos_view, listagemContratos, detalhes_contrato, dashboardView, search_contracts, NotificationView
+from django.urls import path
+from .views import contratos_view, listagemContratos, detalhes_contrato, dashboardView, search_contracts, NotificationView, notificacoes_nao_lidas_api
 
 urlpatterns = [
     path('gestaodecontratos/', contratos_view, name='gestaodecontratos'),
@@ -8,5 +7,7 @@ urlpatterns = [
     path('contrato/<int:contrato_id>/', detalhes_contrato, name='visualizacaocontrato'),
     path('dashboard/', dashboardView, name='dashboard'),
     path('buscacontrato/', search_contracts, name='buscacontrato'),
-    path('notificacoes/', NotificationView, name='notificacoes')
+    path('notificacoes/', NotificationView, name='notificacoes'),
+    path('api/notificacoes_nao_lidas/', notificacoes_nao_lidas_api, name='notificacoes_nao_lidas_api'),
+
 ]

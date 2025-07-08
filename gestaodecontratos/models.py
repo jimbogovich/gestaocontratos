@@ -48,7 +48,7 @@ class contactManagement_db(models.Model):
     contract_id = models.CharField(max_length=10, unique=True, editable = False, verbose_name= 'Contract ID', null=True, blank=True )
     title = models.CharField(max_length=250, verbose_name='Contract Title')
     client = models.ForeignKey(Clientes, on_delete=models.PROTECT, verbose_name='Client')
-    type_contract = models.ForeignKey(TipoContratos, on_delete=models.PROTECT, verbose_name='Contract Type', null=True)
+    type_contract = models.CharField(choices=CONTRACT_TYPE_CHOICES, verbose_name='Contract Type', null=True, max_length=100)
     date_begin = models.DateField(null=False, verbose_name='Start Date')
     date_end = models.DateField(null=False, verbose_name='End Date')
     description = models.TextField(null=True, verbose_name='Description')
@@ -96,8 +96,9 @@ class Reminder(models.Model):
     reminder_date = models.DateField("Data do Lembrete")
     notify_days_before = models.CharField("Dias antes para notificar", max_length=2)
     frequency = models.CharField("Frequência", max_length=20, choices=FREQUENCY_CHOICES)
-
     created_at = models.DateTimeField(auto_now_add=True)
+    visualizado = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.name
