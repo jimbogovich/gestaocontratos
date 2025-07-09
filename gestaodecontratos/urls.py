@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import contratos_view, listagemContratos, detalhes_contrato, dashboardView, search_contracts, NotificationView, notificacoes_nao_lidas_api, CadastroCliente, clientes
+from .views import contratos_view, listagemContratos, detalhes_contrato, dashboardView, search_contracts, NotificationView, notificacoes_nao_lidas_api, CadastroCliente, clientes, login, logout
 
 urlpatterns = [
     path('gestaodecontratos/', contratos_view, name='gestaodecontratos'),
@@ -10,4 +10,6 @@ urlpatterns = [
     path('notificacoes/', NotificationView, name='notificacoes'),
     path('api/notificacoes_nao_lidas/', notificacoes_nao_lidas_api, name='notificacoes_nao_lidas_api'),
     path('cadastroclientes/', CadastroCliente, name='cadastroclientes'),
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
 ]

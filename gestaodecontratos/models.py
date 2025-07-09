@@ -80,11 +80,11 @@ class Client(models.Model):
     type = models.CharField(max_length=100, verbose_name="Tipo de Cliente", choices=[('pessoa_fisica', 'Pessoa Física'), ('pessoa_juridica', 'Pessoa Jurídica')])
     cnpjoucpf = models.CharField(max_length=18, verbose_name="CNPJ/CPF do Cliente", blank=True, null=True)
     email = models.EmailField(max_length=100, verbose_name="Email do Cliente", blank=True, null=True)
-    phone = models.CharField(max_length=100, verbose_name="Telefone do Cliente", blank=True, null=True)
+    phone = models.CharField(max_length=11, verbose_name="Telefone do Cliente", blank=True, null=True)
     address = models.CharField(max_length=100, verbose_name="Endereço do Cliente", blank=True, null=True)
     city = models.CharField(max_length=100, verbose_name="Cidade do Cliente", blank=True, null=True)
     state = models.CharField(max_length=100, verbose_name="Estado do Cliente", blank=True, null=True)
-    zip_code = models.CharField(max_length=100, verbose_name="CEP do Cliente", blank=True, null=True)
+    zip_code = models.CharField(max_length=8, verbose_name="CEP do Cliente", blank=True, null=True)
 
     def __str__(self):
         return self.name + " - " + self.email

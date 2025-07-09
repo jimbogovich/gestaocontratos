@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import ContratosForm, ReminderForm, ClientForm
 from .models import contactManagement_db, Reminder, Client
 from datetime import date, timedelta
+from django.contrib.auth import authenticate, login
 
 def contratos_view(request):
     if request.method == 'POST':
@@ -108,17 +109,35 @@ def CadastroCliente(request):
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('listaclientes')
+            return redirect('dashboard')
 
     else:
         form = ClientForm()
-    return render(request, 'listaclientes.html', {'form': form})
+    return render(request, 'cadastroclientes.html', {'form': form})
 
 def clientes(request):
     clientes = ClientForm.objects.all()
-    return render(request, 'listaclientes.html', {'clientes': clientes})
+    return render(request, 'cadastroclientes.html', {'clientes': clientes})
 
+def login(request):
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
 
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect('dashboard')  # redirecione para onde quiser
+            else:
+                messages.error(request, 'Usuário ou senha inválidos.')
+                return redirect('login')  # ou render com mensagem
+
+        return render(request, 'login.html')
+
+def logout(request):
+    logout(request)
+    return redirect('login')
 
 
 
