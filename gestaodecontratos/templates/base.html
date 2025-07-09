@@ -68,36 +68,64 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $.get('/api/notificacoes_nao_lidas/', function(data) {
-  let dropdown = $('#notificacaoDropdown');
-  dropdown.empty();
+$(document).ready(function () {
+  function carregarNotificacoes() {
+    $.get("/api/notificacoes_nao_lidas/", function (data) {
+      const notificacoes = data.notificacoes;
+      const bolinha = $("#bolinha");
+      const lista = $("#notificacaoLista");
 
-  if (data.length === 0) {
-    dropdown.append('<span class="dropdown-item text-muted">Sem notificações.</span>');
-    $('#notificationBadge').hide();
-    return;
+      // Limpa a lista
+      lista.empty();
+
+      if (notificacoes.length > 0) {
+        // Exibe a bolinha
+        bolinha.removeClass("d-none");
+
+        // Adiciona cada notificação
+        notificacoes.forEach((item) => {
+  const notificacaoHtml = `
+            <li>
+              <a href="/visualizacaocontrato/${item.contract_id}/" class="dropdown-item notificacao-item" data-id="${item.id}">
+                <strong>${item.notify_name}</strong><br>
+                <small class="text-muted">${item.contract_title} – ${item.reminder_date}</small>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+          `;
+          lista.append(notificacaoHtml);
+        });
+
+      } else {
+        bolinha.addClass("d-none");
+
+        lista.append(`
+          <li class="text-center text-muted">Nenhuma notificação</li>
+          <li><hr class="dropdown-divider"></li>
+        `);
+      }
+
+      // Adiciona o botão de novo lembrete
+      lista.append(`
+        <li>
+          <a class="dropdown-item text-primary fw-semibold text-center" href="{% url 'notificacoes' %}">
+            <i class="bi bi-plus-lg me-1"></i>Novo Lembrete
+          </a>
+        </li>
+      `);
+    });
   }
 
-  $('#notificationBadge').show();
+  // Chama a função quando a página carregar
+  carregarNotificacoes();
 
-  data.forEach(n => {
-    let link = $(`
-      <a class="dropdown-item" href="/visualizacaocontrato/${n.contract_id}/">
-        <div class="fw-semibold">
-           ${n.contract_title}
-        </div>
-        <small class="text-muted">Lembrete: ${n.notify_name} - ${n.reminder_date}</small>
-      </a>
-    `);
-
-    dropdown.append(link);
+  // Oculta a bolinha quando o dropdown for aberto
+  $("#dropdownNotificacoes").on("click", function () {
+    $("#bolinha").addClass("d-none");
   });
-
-  dropdown.append('<div class="dropdown-divider"></div>');
-  dropdown.append('<a class="dropdown-item text-primary" href="/notificacoes/">+ Novo Lembrete</a>');
 });
-
 </script>
+
 
 </body>
 </html>

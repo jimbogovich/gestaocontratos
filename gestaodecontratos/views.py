@@ -94,7 +94,9 @@ def notificacoes_nao_lidas_api(request):
             {
                 "id": lembrete.id,
                 "notify_name": lembrete.notify_name,
-                "contract_id": lembrete.contract.id if lembrete.contract else None
+                "contract_id": lembrete.contract.id if lembrete.contract else None,
+                "contract_title": lembrete.contract.title if lembrete.contract else "Sem contrato",
+                "reminder_date": lembrete.reminder_date.strftime('%d/%m/%Y')
             }
             for lembrete in lembretes
         ]

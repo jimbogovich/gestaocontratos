@@ -9,5 +9,4 @@ urlpatterns = [
     path('buscacontrato/', search_contracts, name='buscacontrato'),
     path('notificacoes/', NotificationView, name='notificacoes'),
     path('api/notificacoes_nao_lidas/', notificacoes_nao_lidas_api, name='notificacoes_nao_lidas_api'),
-
 ]
