@@ -69,61 +69,46 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
-  function carregarNotificacoes() {
-    $.get("/api/notificacoes_nao_lidas/", function (data) {
-      const notificacoes = data.notificacoes;
-      const bolinha = $("#bolinha");
-      const lista = $("#notificacaoLista");
+  $.get("/api/notificacoes_nao_lidas/", function (data) {
+    const notificacoes = data.notificacoes;
+    const lista = $("#notificacaoLista");
+    const bolinha = $("#bolinha");
 
-      // Limpa a lista
-      lista.empty();
+    if (notificacoes.length > 0) {
+      bolinha.removeClass("d-none");
+      lista.html(""); // limpa o conteúdo padrão
 
-      if (notificacoes.length > 0) {
-        // Exibe a bolinha
-        bolinha.removeClass("d-none");
-
-        // Adiciona cada notificação
-        notificacoes.forEach((item) => {
-  const notificacaoHtml = `
-            <li>
-              <a href="/visualizacaocontrato/${item.contract_id}/" class="dropdown-item notificacao-item" data-id="${item.id}">
-                <strong>${item.notify_name}</strong><br>
-                <small class="text-muted">${item.contract_title} – ${item.reminder_date}</small>
-              </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-          `;
-          lista.append(notificacaoHtml);
-        });
-
-      } else {
-        bolinha.addClass("d-none");
-
-        lista.append(`
-          <li class="text-center text-muted">Nenhuma notificação</li>
+      notificacoes.forEach(function (n) {
+        const urlContrato = `/contrato/${n.contract_id}/`;
+        const item = `
+          <li>
+            <a href="${urlContrato}" class="dropdown-item">
+              <strong>${n.contract_title}</strong><br>
+              <small class="text-muted">${n.notify_name}</small> <br> <small class="text-muted">${n.reminder_date}</small>
+            </a>
+          </li>
           <li><hr class="dropdown-divider"></li>
-        `);
-      }
+        `;
+        lista.append(item);
+      });
 
-      // Adiciona o botão de novo lembrete
+      // Adiciona o botão "Novo Lembrete"
       lista.append(`
         <li>
-          <a class="dropdown-item text-primary fw-semibold text-center" href="{% url 'notificacoes' %}">
+          <a class="dropdown-item text-primary fw-semibold text-center" href="/notificacoes/">
             <i class="bi bi-plus-lg me-1"></i>Novo Lembrete
           </a>
         </li>
       `);
-    });
-  }
+    }
+  });
 
-  // Chama a função quando a página carregar
-  carregarNotificacoes();
-
-  // Oculta a bolinha quando o dropdown for aberto
-  $("#dropdownNotificacoes").on("click", function () {
-    $("#bolinha").addClass("d-none");
+  // Oculta a bolinha ao abrir o dropdown
+  $('#dropdownNotificacoes').on('click', function () {
+    $('#bolinha').addClass('d-none');
   });
 });
+
 </script>
 
 
