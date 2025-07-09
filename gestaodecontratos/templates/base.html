@@ -69,14 +69,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
+  const bolinha = $("#bolinha");
+  const lista = $("#notificacaoLista");
+
+  // Verifica se a bolinha já foi exibida na sessão
+  const bolinhaMostrada = sessionStorage.getItem("bolinha_mostrada");
+
   $.get("/api/notificacoes_nao_lidas/", function (data) {
     const notificacoes = data.notificacoes;
-    const lista = $("#notificacaoLista");
-    const bolinha = $("#bolinha");
 
     if (notificacoes.length > 0) {
-      bolinha.removeClass("d-none");
-      lista.html(""); // limpa o conteúdo padrão
+      lista.html(""); // Limpa a lista padrão
 
       notificacoes.forEach(function (n) {
         const urlContrato = `/contrato/${n.contract_id}/`;
@@ -92,7 +95,6 @@ $(document).ready(function () {
         lista.append(item);
       });
 
-      // Adiciona o botão "Novo Lembrete"
       lista.append(`
         <li>
           <a class="dropdown-item text-primary fw-semibold text-center" href="/notificacoes/">
@@ -100,14 +102,21 @@ $(document).ready(function () {
           </a>
         </li>
       `);
+
+      // Só exibe a bolinha se ainda não foi mostrada nesta sessão
+      if (!bolinhaMostrada) {
+        bolinha.removeClass("d-none");
+        sessionStorage.setItem("bolinha_mostrada", "true");
+      }
     }
   });
 
-  // Oculta a bolinha ao abrir o dropdown
+  // Ao clicar, esconde a bolinha (não afeta a sessionStorage)
   $('#dropdownNotificacoes').on('click', function () {
-    $('#bolinha').addClass('d-none');
+    bolinha.addClass('d-none');
   });
 });
+
 
 </script>
 

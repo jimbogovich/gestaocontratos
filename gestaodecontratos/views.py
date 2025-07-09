@@ -1,8 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .forms import ContratosForm, ReminderForm
-from .models import contactManagement_db, Reminder
+from .forms import ContratosForm, ReminderForm, ClientForm
+from .models import contactManagement_db, Reminder, Client
 from datetime import date, timedelta
 
 def contratos_view(request):
@@ -102,6 +102,28 @@ def notificacoes_nao_lidas_api(request):
         ]
     }
     return JsonResponse(data)
+
+def CadastroCliente(request):
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listaclientes')
+
+    else:
+        form = ClientForm()
+    return render(request, 'listaclientes.html', {'form': form})
+
+def clientes(request):
+    clientes = ClientForm.objects.all()
+    return render(request, 'listaclientes.html', {'clientes': clientes})
+
+
+
+
+
+
+
 
 
 
