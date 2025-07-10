@@ -1,34 +1,32 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load widget_tweaks %}
 {% load static %}
 {% block content %}
-<div class="container my-3 d-flex justify-content-center">
-  <div class="card shadow-lg p-4 w-100 " style="max-width: 450px;">
-    <h2 class="mb-4 fw-bold">Login</h2>
+<div class="container my-5 d-flex justify-content-center">
+  <div class="card shadow p-4 w-100" style="max-width: 420px;">
+    <div class="text-center mb-4">
+      <img src="/static/logoabess.png" alt="Logo" class="img-fluid mb-2" style="height: 60px;">
+      <h2 class="fw-bold text-dark">Entrar no sistema</h2>
+    </div>
 
-    <form method="POST" class="row g-3" style="max-width: 400px;">
+    {% if form.errors %}
+      <div class="alert alert-danger">Usuário ou senha inválidos.</div>
+    {% endif %}
+
+    <form method="post">
       {% csrf_token %}
-
-      <div class="col-12">
-        <label for="username" class="form-label">Usuário</label>
-        <input type="text" class="form-control" id="username" name="username" required>
+      <div class="mb-3">
+        {{ form.username.label_tag }}
+        {{ form.username|add_class:"form-control" }}
       </div>
-
-      <div class="col-12">
-        <label for="password" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="password" name="password" required>
+      <div class="mb-3">
+        {{ form.password.label_tag }}
+        {{ form.password|add_class:"form-control" }}
       </div>
-
-      <div class="col-12">
-        <button type="submit" class="btn btn-primary">Entrar</button>
-      </div>
-
-      {% if error %}
-        <div class="col-12">
-          <div class="alert alert-danger mt-3">{{ error }}</div>
-        </div>
-      {% endif %}
+      <button type="submit" class="btn btn-primary w-100">
+        Entrar
+      </button>
     </form>
   </div>
 </div>
-
 {% endblock %}

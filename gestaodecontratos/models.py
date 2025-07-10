@@ -113,7 +113,3 @@ class Reminder(models.Model):
 
 
 
-
-
-
-

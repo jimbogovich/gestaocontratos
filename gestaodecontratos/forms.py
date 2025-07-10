@@ -1,10 +1,18 @@
 from msilib.schema import CheckBox
 from tkinter.tix import Select
 from .models import contactManagement_db, STATUS, Reminder, Client
+from django.contrib.auth.models import User
 import re
 from django import forms
 import datetime
+from django.contrib.auth.forms import UserCreationForm
 
+class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(required=True, max_length=100)
+    email = forms.EmailField(required=True)
+    class Meta:
+        model=User
+        fields = ("username", "email", "password1", "password2")
 
 class ContratosForm(forms.ModelForm):
     status = forms.ChoiceField(
@@ -77,4 +85,7 @@ class ClientForm(forms.ModelForm):
             return value
         else:
             raise forms.ValidationError("Informe um CPF ou CNPJ válido.")
+
+
+
 

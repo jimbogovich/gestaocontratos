@@ -6,8 +6,9 @@
       <i class="bi bi-box text-primary fs-4 me-2"></i>ContractHub
     </a>
 
+{% if request.user.is_authenticated %}
+     <div class="collapse navbar-collapse" id="navbarNav">
 
-    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-4">
         <li class="nav-item">
           <a class="nav-link fw-semibold text-dark" href="{% url 'dashboard' %}">Dashboard</a>
@@ -65,20 +66,14 @@
           <li class="dropdown-item-text">
             <strong>{{ user.username }}</strong>
           </li>
-          <li><hr class="dropdown-divider"></li>
-          <li>
-            <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-              <i class="bi bi-box-arrow-right me-1"></i>Sair
-            </a>
-          </li>
-        {% else %}
+           {% else %}
           <li>
             <a class="dropdown-item" href="{% url 'login' %}">
               <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
             </a>
           </li>
           <li>
-            <a class="dropdown-item" href="{% url 'cadastroclientes' %}">
+            <a class="dropdown-item" href="{% url 'cadastro' %}">
               <i class="bi bi-person-plus me-1"></i>Cadastre-se
             </a>
           </li>
@@ -86,5 +81,6 @@
       </ul>
     </span>
     </div>
+    {% endif %}
   </div>
 </nav>

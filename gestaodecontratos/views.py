@@ -1,11 +1,15 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .forms import ContratosForm, ReminderForm, ClientForm
+from .forms import ContratosForm, ReminderForm, ClientForm, CustomUserCreationForm
 from .models import contactManagement_db, Reminder, Client
 from datetime import date, timedelta
-from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib.auth.views import LoginView
 
+
+@login_required
 def contratos_view(request):
     if request.method == 'POST':
         form = ContratosForm(request.POST)
@@ -20,11 +24,13 @@ def contratos_view(request):
     form = ContratosForm()
     return render(request, 'contratos.html', {'form': form })
 
+@login_required
 def listagemContratos(request):
     contratos = contactManagement_db.objects.select_related('client').order_by('date_begin')
 
     return render(request, 'listacontratos.html', {'contratos': contratos})
 
+@login_required
 def detalhes_contrato(request, contrato_id):
     contrato = get_object_or_404(contactManagement_db, id=contrato_id)
 
@@ -34,6 +40,7 @@ def detalhes_contrato(request, contrato_id):
 
     return render(request, 'detalhescontrato.html', {'contrato': contrato})
 
+@login_required
 def dashboardView(request):
     today = date.today()
     total_contratos = contactManagement_db.objects.count()
@@ -58,6 +65,7 @@ def dashboardView(request):
         'contratos': contratos,
     })
 
+@login_required
 def search_contracts(request):
     contratos = contactManagement_db.objects.all()
 
@@ -78,6 +86,7 @@ def search_contracts(request):
         'contratos': contratos
     })
 
+@login_required
 def NotificationView(request):
     if request.method == 'POST':
         form = ReminderForm(request.POST)
@@ -88,6 +97,7 @@ def NotificationView(request):
         form = ReminderForm()
         return render(request, 'notificacoes.html', {'form': form})
 
+@login_required
 def notificacoes_nao_lidas_api(request):
     lembretes = Reminder.objects.filter(visualizado=False).order_by('-reminder_date')[:5]
     data = {
@@ -104,6 +114,7 @@ def notificacoes_nao_lidas_api(request):
     }
     return JsonResponse(data)
 
+@login_required
 def CadastroCliente(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -115,29 +126,43 @@ def CadastroCliente(request):
         form = ClientForm()
     return render(request, 'cadastroclientes.html', {'form': form})
 
+@login_required
 def clientes(request):
     clientes = ClientForm.objects.all()
     return render(request, 'cadastroclientes.html', {'clientes': clientes})
 
-def login(request):
-        if request.method == 'POST':
-            username = request.POST.get('username')
-            password = request.POST.get('password')
 
-            user = authenticate(request, username=username, password=password)
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
 
-            if user is not None:
-                login(request, user)
-                return redirect('dashboard')  # redirecione para onde quiser
-            else:
-                messages.error(request, 'Usuário ou senha inválidos.')
-                return redirect('login')  # ou render com mensagem
 
-        return render(request, 'login.html')
+def cadastro_view(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect('dashboard')  # Redirecione para a página desejada
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'cadastro.html', {'form': form})
 
-def logout(request):
+
+@login_required
+def cadastro_view(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Conta criada com sucesso!")
+            return redirect('login')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'cadastro.html', {'form': form})
+
+
+def logout_view(request):
     logout(request)
-    return redirect('login')
+    return render(request, 'logout.html')
 
 
 
