@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from .views import CustomLoginView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('gestaodecontratos/', views.contratos_view, name='gestaodecontratos'),
@@ -14,5 +15,7 @@ urlpatterns = [
     path('cadastroclientes/', views.CadastroCliente, name='cadastroclientes'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('cadastro/', views.cadastro_view, name='cadastro'),
-    path('logout/', views.logout_view, name='logout'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
+    path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
+
 ]

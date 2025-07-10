@@ -65,6 +65,13 @@
         {% if user.is_authenticated %}
           <li class="dropdown-item-text">
             <strong>{{ user.username }}</strong>
+            <!-- Ícone de usuário -->
+      <div class="d-flex align-items-center">
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">
+           Sair
+        </a>
+      </div>
+
           </li>
            {% else %}
           <li>
@@ -82,5 +89,6 @@
     </span>
     </div>
     {% endif %}
+
   </div>
 </nav>
