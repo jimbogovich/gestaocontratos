@@ -17,7 +17,7 @@
           <a class="nav-link fw-semibold text-dark" href="{% url 'listadecontratos' %}">Contratos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-semibold text-dark" href="#">Clientes</a>
+          <a class="nav-link fw-semibold text-dark" href="{% url 'clientes' %}">Clientes</a>
         </li>
         <li class="nav-item">
           <a class="nav-link fw-semibold text-dark" href="{% url 'buscacontrato' %}">Buscar Contratos</a>
@@ -66,7 +66,7 @@
           <li class="dropdown-item-text">
             <strong>{{ user.username }}</strong>
             <!-- Ícone de usuário -->
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center mt-2">
         <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">
            Sair
         </a>

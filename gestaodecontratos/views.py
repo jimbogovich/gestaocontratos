@@ -1,7 +1,7 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .forms import ContratosForm, ReminderForm, ClientForm, CustomUserCreationForm
+from .forms import ContratosForm, ReminderForm, ClientForm, CustomUserCreationForm, DocumentoForm
 from .models import contactManagement_db, Reminder, Client
 from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
@@ -10,19 +10,20 @@ from django.contrib.auth.views import LoginView
 
 
 @login_required
-def contratos_view(request):
+def contratos_view(request, contract_id=None):
+    contrato = None
+    if contract_id:
+        contrato = get_object_or_404(contactManagement_db, contract_id=contract_id)
+
     if request.method == 'POST':
-        form = ContratosForm(request.POST)
-
+        form = ContratosForm(request.POST, request.FILES, instance=contrato)
         if form.is_valid():
-           contrato = form.save()
-           return redirect('visualizacaocontrato', contrato.id)
-        else:
-            messages.error(request, form.errors)
+            form.save()
+            return redirect('visualizacaocontrato', pk=form.instance.pk)
+    else:
+        form = ContratosForm(instance=contrato)
 
-
-    form = ContratosForm()
-    return render(request, 'contratos.html', {'form': form })
+    return render(request, 'contratos.html', {'form': form})
 
 @login_required
 def listagemContratos(request):
@@ -33,12 +34,32 @@ def listagemContratos(request):
 @login_required
 def detalhes_contrato(request, contrato_id):
     contrato = get_object_or_404(contactManagement_db, id=contrato_id)
+    documentos = contrato.documentos.all()
 
-    if request.method == 'POST' and request.FILES.get('document'):
-        contrato.document = request.FILES['document']
-        contrato.save()
+    if request.method == 'POST':
+        # Upload direto no campo principal `document`
+        if request.FILES.get('document'):
+            contrato.document = request.FILES['document']
+            contrato.save()
+            return redirect('visualizacaocontrato', contrato_id=contrato_id)
 
-    return render(request, 'detalhescontrato.html', {'contrato': contrato})
+        # Upload de documentos relacionados
+        if 'upload_documento' in request.POST:
+            form_doc = DocumentoForm(request.POST, request.FILES)
+            if form_doc.is_valid():
+                doc = form_doc.save(commit=False)
+                doc.contrato = contrato
+                doc.save()
+                return redirect('visualizacaocontrato', contrato_id=contrato_id)
+    else:
+        form_doc = DocumentoForm()
+
+    return render(request, 'detalhescontrato.html', {
+        'contrato': contrato,
+        'documentos': documentos,
+        'form_doc': form_doc,
+    })
+
 
 @login_required
 def dashboardView(request):
@@ -120,34 +141,25 @@ def CadastroCliente(request):
         form = ClientForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('dashboard')
+            print('parou aqui!')
 
-    else:
-        form = ClientForm()
+            return redirect('dashboard')
+        else:
+            messages.error(request, form.errors)
+
+
+
+    form = ClientForm(request.POST or None)
     return render(request, 'cadastroclientes.html', {'form': form})
 
 @login_required
 def clientes(request):
-    clientes = ClientForm.objects.all()
-    return render(request, 'cadastroclientes.html', {'clientes': clientes})
-
+    clientes = Client.objects.all()
+    return render(request, 'listarclientes.html', {'clientes': clientes})
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
 
-
-def cadastro_view(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            return redirect('dashboard')  # Redirecione para a página desejada
-    else:
-        form = CustomUserCreationForm()
-    return render(request, 'cadastro.html', {'form': form})
-
-
-@login_required
 def cadastro_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -159,31 +171,12 @@ def cadastro_view(request):
         form = CustomUserCreationForm()
     return render(request, 'cadastro.html', {'form': form})
 
-
+@login_required
 def logout_view(request):
     logout(request)
     return render(request, 'logout.html')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+@login_required
+def campo_cliente(request):
+    return render(request, 'cliente.html')
 

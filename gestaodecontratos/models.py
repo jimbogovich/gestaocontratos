@@ -3,6 +3,7 @@ import random
 import string
 from datetime import date, timedelta
 
+from django.utils import timezone
 
 def generate_contract_id():
     prefix = 'C'
@@ -56,6 +57,7 @@ class contactManagement_db(models.Model):
     status = models.CharField(max_length=100, blank= False, choices=STATUS, verbose_name='Status', null=False)
     document = models.FileField(upload_to="visualizacaocontrato/", verbose_name='Document', null=True, blank=True)
 
+
     @property
     def status_label(self):
         today = date.today()
@@ -99,17 +101,18 @@ class Reminder(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     visualizado = models.BooleanField(default=False)
 
-
     def __str__(self):
         return self.name
 
     def __str__(self):
         return self.reminder_type
 
+class Documento(models.Model):
+    contrato = models.ForeignKey('contactManagement_db', on_delete=models.CASCADE, related_name='documentos')
+    nome = models.CharField(max_length=255)
+    arquivo = models.FileField(upload_to='documentos/')
+    tipo = models.CharField(max_length=50, blank=True, null=True)
+    data_envio = models.DateTimeField(default=timezone.now)
 
-
-
-
-
-
-
+    def __str__(self):
+        return self.nome

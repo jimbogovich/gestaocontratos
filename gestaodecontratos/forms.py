@@ -1,6 +1,6 @@
 from msilib.schema import CheckBox
 from tkinter.tix import Select
-from .models import contactManagement_db, STATUS, Reminder, Client
+from .models import contactManagement_db, STATUS, Reminder, Client, Documento
 from django.contrib.auth.models import User
 import re
 from django import forms
@@ -24,6 +24,16 @@ class ContratosForm(forms.ModelForm):
     class Meta:
         model = contactManagement_db
         fields = '__all__'
+
+
+    def get_contrato_por_id(self, contract_id):
+        try:
+            contrato = contactManagement_db.objects.get(contract_id=contract_id)
+            self.instance = contrato  # Define os dados no form atual
+            return self
+        except contactManagement_db.DoesNotExist:
+            return None
+
 
 
 class ReminderForm(forms.ModelForm):
@@ -85,6 +95,11 @@ class ClientForm(forms.ModelForm):
             return value
         else:
             raise forms.ValidationError("Informe um CPF ou CNPJ válido.")
+
+class DocumentoForm(forms.ModelForm):
+    class Meta:
+        model = Documento
+        exclude = ['contrato', 'tipo']
 
 
 

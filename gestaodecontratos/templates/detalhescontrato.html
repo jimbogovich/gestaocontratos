@@ -10,16 +10,17 @@
             <h1 class="fw-semibold mb-2">{{ contrato.title }}</h1>
           </div>
           <div class="col-5 d-flex flex-wrap flex-row align-content-center justify-content-end gap-2">
-                <button type="submit" style="min-width: 100px;" class="btn btn-light rounded text-dark"
-                     style="background-color: #e9ecef; color: #212529; cursor: pointer;">
-                    <a class="text-dark fw-semibold" href="{% url 'gestaodecontratos' %}">
+                <button type="submit" style="min-width: 100px;" class="btn btn-light rounded text-dark" style="color: #212529; cursor: pointer;">
+                   <a href="{% url 'editar_contrato' contrato.contract_id %}" class="btn">
                         <i class="bi bi-pencil"></i>
                          Editar
-                    </a>
+                   </a>
                 </button>
                 <button type="submit" style="min-width: 100px;" class="btn btn-primary fw-semibold rounded-3">
+                <a href="{% url 'gestaodecontratos' %}" class="text-decoration-none text-light">
                       <i class="bi bi-plus-lg me-1"></i>
                           Adicionar
+                </a>
                 </button>
           </div>
     </div>
@@ -83,54 +84,44 @@
   <div class="card-body">
     <h5 class="fw-bold mb-3">Documentos Relacionados</h5>
 
-    <div class="d-flex justify-content-end mb-2">
-      <form method="POST" enctype="multipart/form-data" action="{% url 'visualizacaocontrato' contrato.id %}">
-          {% csrf_token %}
-          <label for="id_document" class="btn btn-sm rounded px-3 py-1"
-                 style="background-color: #e9ecef; color: #212529; cursor: pointer;">
-              <i class="bi bi-plus-lg me-1"></i>
-              Upload Arquivo
-          </label>
-          <input type="file" id="id_document" name="document" hidden onchange="this.form.submit()">
-      </form>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form_doc.as_p }}
+  <button type="submit" name="upload_documento" class="btn btn-primary"> <i class="bi bi-clipboard-plus me-2"></i>Salvar arquivo</button>
+</form>
 
-    </div>
+<table class="table mt-4">
+  <thead>
+    <tr>
+      <th>Nome do Documento</th>
+      <th>Tipo</th>
+      <th>Data</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doc in documentos %}
+      <tr>
+        <td>{{ doc.nome }}</td>
+        <td>{{ doc.tipo }}</td>
+        <td>{{ doc.data_envio|date:"d/m/Y H:i" }}</td>
+        <td>
+          <a href="{{ doc.arquivo.url }}" download class="btn btn-outline-success btn-sm">
+            <i class="bi bi-download"></i> Baixar
+          </a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="4">Nenhum documento enviado ainda.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-    <table class="table table-bordered align-middle text-sm">
-      <thead class="table-light">
-        <tr>
-          <th class="text-muted">Nome do Documento</th>
-          <th class="text-muted">Tipo</th>
-          <th class="text-muted">Data</th>
-          <th class="text-muted text-center">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for contrato in contratos %}
-        <tr>
-          <td>
-            <a href="{{ contrato.document.url }}" download>
-              {{ contrato.document.name|slice:"14:" }}
-            </a>
-          </td>
-          <td>{{ contrato.type_contract }}</td>
-          <td>{{ contrato.date_begin|date:"F d, Y" }}</td>
-          <td class="text-center">
-            <a href="{{ contrato.document.url }}" class="text-primary me-3" target="_blank">Ver</a>
-            <a href="{% url 'delete_document' contrato.id %}" class="text-danger">Excluir</a>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="4" class="text-center text-muted">Nenhum documento enviado ainda.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 </div>
-
-
       </div>
 </div>
 {% endblock %}
+
