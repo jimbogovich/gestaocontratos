@@ -20,7 +20,7 @@ CONTRACT_TYPE_CHOICES = [
         ('manutencao', 'Manutenção'),
         ('servicos', 'Serviços'),
         ('suprimentos', 'Suprimentos'),
-        ('Internet', 'Internet'),
+        ('internet', 'Internet'),
         ('telefonia', 'Telefonia'),
         # Adicione outros tipos conforme necessário
     ]
@@ -32,11 +32,19 @@ FREQUENCY_CHOICES = [
     ('monthly', 'Mensal'),
 ]
 
-class Clientes(models.Model):
-    nome = models.CharField(max_length=250)
+class Client(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Nome do Cliente")
+    type = models.CharField(max_length=100, verbose_name="Tipo de Cliente", choices=[('pessoa_fisica', 'Pessoa Física'), ('pessoa_juridica', 'Pessoa Jurídica')])
+    cnpjoucpf = models.CharField(max_length=18, verbose_name="CNPJ/CPF do Cliente", blank=True, null=True)
+    email = models.EmailField(max_length=100, verbose_name="Email do Cliente", blank=True, null=True)
+    phone = models.CharField(max_length=11, verbose_name="Telefone do Cliente", blank=True, null=True)
+    address = models.CharField(max_length=100, verbose_name="Endereço do Cliente", blank=True, null=True)
+    city = models.CharField(max_length=100, verbose_name="Cidade do Cliente", blank=True, null=True)
+    state = models.CharField(max_length=100, verbose_name="Estado do Cliente", blank=True, null=True)
+    zip_code = models.CharField(max_length=8, verbose_name="CEP do Cliente", blank=True, null=True)
 
     def __str__(self):
-        return self.nome
+        return self.name + " - " + self.email
 
 class TipoContratos(models.Model):
     tipos = models.CharField(choices=CONTRACT_TYPE_CHOICES, max_length=100)
@@ -48,7 +56,8 @@ class TipoContratos(models.Model):
 class contactManagement_db(models.Model):
     contract_id = models.CharField(max_length=10, unique=True, editable = False, verbose_name= 'Contract ID', null=True, blank=True )
     title = models.CharField(max_length=250, verbose_name='Contract Title')
-    client = models.ForeignKey(Clientes, on_delete=models.PROTECT, verbose_name='Client')
+    client = models.ManyToManyField(Client, verbose_name='Client')
+    # criar campo "tipos" de clientes (contratante, contratado, testemunha e etc...) com um manytomany e um Choice fora do model
     type_contract = models.CharField(choices=CONTRACT_TYPE_CHOICES, verbose_name='Contract Type', null=True, max_length=100)
     date_begin = models.DateField(null=False, verbose_name='Start Date')
     date_end = models.DateField(null=False, verbose_name='End Date')
@@ -77,19 +86,7 @@ class contactManagement_db(models.Model):
             self.contract_id = new_id
         super().save(*args, **kwargs)
 
-class Client(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Nome do Cliente")
-    type = models.CharField(max_length=100, verbose_name="Tipo de Cliente", choices=[('pessoa_fisica', 'Pessoa Física'), ('pessoa_juridica', 'Pessoa Jurídica')])
-    cnpjoucpf = models.CharField(max_length=18, verbose_name="CNPJ/CPF do Cliente", blank=True, null=True)
-    email = models.EmailField(max_length=100, verbose_name="Email do Cliente", blank=True, null=True)
-    phone = models.CharField(max_length=11, verbose_name="Telefone do Cliente", blank=True, null=True)
-    address = models.CharField(max_length=100, verbose_name="Endereço do Cliente", blank=True, null=True)
-    city = models.CharField(max_length=100, verbose_name="Cidade do Cliente", blank=True, null=True)
-    state = models.CharField(max_length=100, verbose_name="Estado do Cliente", blank=True, null=True)
-    zip_code = models.CharField(max_length=8, verbose_name="CEP do Cliente", blank=True, null=True)
 
-    def __str__(self):
-        return self.name + " - " + self.email
 
 class Reminder(models.Model):
     notify_name = models.CharField("Nome do Lembrete", max_length=255)
@@ -111,7 +108,7 @@ class Documento(models.Model):
     contrato = models.ForeignKey('contactManagement_db', on_delete=models.CASCADE, related_name='documentos')
     nome = models.CharField(max_length=255)
     arquivo = models.FileField(upload_to='documentos/')
-    tipo = models.CharField(max_length=50, blank=True, null=True)
+    tipo = models.CharField(max_length=50, blank=True, null=True, choices=CONTRACT_TYPE_CHOICES)
     data_envio = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

@@ -6,6 +6,8 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('gestaodecontratos/', views.contratos_view, name='gestaodecontratos'),
+    path('documento/<int:documento_id>/download/', views.download_arquivo, name='download_arquivo'),
+    path('documento/<int:doc_id>/excluir/', views.excluir_documento, name='excluir_documento'),
     path('gestaodecontratos/<str:contract_id>/', views.contratos_view, name='editar_contrato'),
     path('listadecontratos/', views.listagemContratos, name='listadecontratos' ),
     path('contrato/<int:contrato_id>/', views.detalhes_contrato, name='visualizacaocontrato'),
@@ -21,3 +23,4 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(template_name='logout.html'), name='logout'),
     path('dadoscliente/', views.campo_cliente, name='dadoscliente')
 ]
+

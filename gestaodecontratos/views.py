@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .forms import ContratosForm, ReminderForm, ClientForm, CustomUserCreationForm, DocumentoForm
-from .models import contactManagement_db, Reminder, Client
+from .models import contactManagement_db, Reminder, Client, Documento
 from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
@@ -19,7 +19,7 @@ def contratos_view(request, contract_id=None):
         form = ContratosForm(request.POST, request.FILES, instance=contrato)
         if form.is_valid():
             form.save()
-            return redirect('visualizacaocontrato', pk=form.instance.pk)
+            return redirect('visualizacaocontrato', contrato_id=form.instance.id)
     else:
         form = ContratosForm(instance=contrato)
 
@@ -57,7 +57,7 @@ def detalhes_contrato(request, contrato_id):
     return render(request, 'detalhescontrato.html', {
         'contrato': contrato,
         'documentos': documentos,
-        'form_doc': form_doc,
+        'form_doc': form_doc
     })
 
 
@@ -180,3 +180,16 @@ def logout_view(request):
 def campo_cliente(request):
     return render(request, 'cliente.html')
 
+
+def download_arquivo(request, documento_id):
+    documento = get_object_or_404(Documento, id=documento_id)
+
+    response = FileResponse(documento.arquivo.open('rb'), as_attachment=True,
+                filename=documento.arquivo.name.split('/')[-1])
+    return response
+
+def excluir_documento(request, doc_id):
+    documento = get_object_or_404(Documento, id=doc_id)
+    contrato_id = documento.contrato.id  # para redirecionar de volta ao contrato correto
+    documento.delete()
+    return redirect('visualizacaocontrato', contrato_id=contrato_id)

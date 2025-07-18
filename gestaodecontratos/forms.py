@@ -97,9 +97,15 @@ class ClientForm(forms.ModelForm):
             raise forms.ValidationError("Informe um CPF ou CNPJ válido.")
 
 class DocumentoForm(forms.ModelForm):
+    tipo = forms.ChoiceField(
+        choices=[('', 'Selecione o tipo')] + Documento._meta.get_field('tipo').choices,
+        required=True,
+        label='Tipo do Documento'
+    )
+
     class Meta:
         model = Documento
-        exclude = ['contrato', 'tipo']
+        exclude = ['contrato']
 
 
 
